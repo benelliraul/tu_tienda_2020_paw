@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="shortcut icon" href=/static/img/logo_tienda.png>
+    <title>Tu tienda</title>
+    <link rel="stylesheet" href="/static/css/estilos.css">
+    <!-- Agrego bootstrap -->
+    <link rel="stylesheet" href="/static/css/bootstrap.css"> 
+</head>
+<body>
+    <header >
+        <div class="container col-lg-2 col-md-3 col-sm-3 col-xs-3">
+            <img class= "img-fluid" src="/static/img/tienda1.png" alt="Logo de Tu Tienda">
+        </div>
+    </header>
+    <span>{{mensaje}}</span>
+
+    <main class="pb-5">
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+            <a class="navbar-brand" href={{url_for('tutienda')}}>
+                <img src="/static/img/sale.png" width="30" height="30" class="d-inline-block align-top" alt="image for sale">
+                Tu tienda en línea
+            </a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+                
+            <!-- Barra de navegación -->
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href={{url_for('formulario')}}>Crear tienda</a> 
+                    </li>
+                    <li class="nav-item">
+                            <a class="nav-link" href="#">Ofertas</a> 
+                    </li>
+
+                    <!-- Aca va el desplegable CATEGORIAS-->
+                    <li class="nav-item dropdown"> 
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Categorias
+                        </a>
+
+                        <!-- Opciones del desplegable CATEGORIAS -->
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="{{url_for('buscar_categoria',categoria="bebidas")}}">Alimentos y bebidas</a>
+                            <a class="dropdown-item" href="{{url_for('buscar_categoria',categoria="educacion")}}">Educación</a>
+                            <a class="dropdown-item" href="{{url_for('buscar_categoria',categoria="entretenimiento")}}">Entretenimiento</a>
+                            <a class="dropdown-item" href="{{url_for('buscar_categoria',categoria="salud")}}">Salud</a>
+                            <a class="dropdown-item" href="{{url_for('buscar_categoria',categoria="varios")}}">Tiendas de artículos varios</a>
+                            <a class="dropdown-item" href="{{url_for('buscar_categoria',categoria="transporte")}}">Transporte</a>
+                            <a class="dropdown-item" href="{{url_for('buscar_categoria',categoria="vestimenta")}}">Vestimenta</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#">Otros</a>
+                        </div>
+                    </li>
+
+                    <!-- Aca va el desplegable AYUDA -->
+                    <li class="nav-item dropdown"> 
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Ayuda
+                        </a>
+
+                        <!-- Opciones del desplegable AYUDA -->
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href={{url_for('acerca')}}>Acerca de Tu Tienda</a>
+                            <a class="dropdown-item" href="#">Manual para crear tu tienda</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#">Contáctanos</a>
+                        </div>
+                    </li>
+                </ul>
+                
+                <ul class="navbar-nav mr-2 justify-content-end">
+
+                    <!-- Aca va el desplegable INGRESAR -->
+                    <li class="nav-item dropdown"> 
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Ingresar         
+                        </a>
+
+                        <!-- Formulario de ingreso a la cuenta -->
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <form class="px-4 py-3" action='/usuario' method="POST">
+
+                                <!-- Para ingresar el correo electrónico -->
+                                <div class="form-group">
+                                    <label for="exampleDropdownFormEmail1">Correo electrónico</label>
+                                    <input name='correo' type="email" class="form-control" id="exampleDropdownFormEmail1" placeholder="email@ejemplo.com">
+                                </div>
+
+                                <!-- Para ingresar la contraseña -->
+                                <div class="form-group">
+                                    <label for="exampleDropdownFormPassword1">Contraseña</label>
+                                    <input name='contrasena' type="password" class="form-control" id="exampleDropdownFormPassword1" placeholder="Contraseña">
+                                </div>
+
+                                <!-- Opción para recordar contraseña  -->
+                                <div class="form-check">
+                                    <input type="checkbox" class="form-check-input" id="dropdownCheck">
+                                    <label class="form-check-label" for="dropdownCheck">
+                                        Recordar contraseña
+                                    </label>
+                                </div>
+
+                                <!-- Botón para acceder -->
+                                <button type="submit" class="btn btn-primary">Entrar</button>
+
+                            </form>
+
+                            <div class="dropdown-divider"></div>
+
+                            <!-- Opciones de ingreso -->
+                            <a class="dropdown-item" href="formulario.html">¿Eres nuevo?, regístrate</a>
+                            <a class="dropdown-item" href="#">¿Olvidaste la contraseña?</a>
+
+                        </div>
+                    </li>
+                </ul>
+
+                <!-- Barra de búsqueda -->
+                <form class="form-inline my-2 my-lg-0" action='/buscar' method="POST">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Busca una tienda" name ='buscar' aria-label="Search">
+                    <button id="search-button"  class="btn btn-outline-success my-2 my-sm-0" type="submit">Buscar</button>
+                </form>
+            </div>
+        </nav> 
+
+        <!-- Aquí el cuerpo de la página -->
+
+        <!-- Vista del perfil de la pagina -->
+        <div class="card mb-3 text-center ml-5 mr-5 mt-5">
+            <div class="row no-gutters">
+
+                <!-- Imagen -->
+                <div class="col-md-4 text-center verde_clarito pt-4 pl-4 pr-4 pb-2" id="div_imagen_tienda">
+                    <img  class="card-img" id="img_prod" alt="Fachada de la tienda" title="">
+                </div>
+ 
+                <!--Cuerpo del perfil-->
+                <div class="col-md-8 pb-4" id="div_nombre">
+                    <div class="card-body verde_clarito">
+                        <h4 class="card-title " >Producto: <br></h4>
+                        <h4 class="card-title " id= "nombre_tienda"> <i></i><br></h4>
+                    </div>    
+                    <div class="dropdown-divider">
+                        
+                    </div>
+                    <h4 class="card-title"></h4>  <!-- Se carga dinamicamente el nombre de la tienda-->
+
+                    
+                    <h4 clas="card-title">A continuacion podra editar los datos del producto</h4>
+                </div>
+            </div>
+        </div>
+  
+        <!-- Opciones de editado -->
+        <div class="card text-center ml-5 mr-5 ">
+            <div class=" verdecito">
+                <h4>Información</h4>
+            </div>
+
+            <ul class="list-group list-group-flush">
+
+                    <li class="list-group-item" id="li_nombre">
+                            <h5>Nombre</h5> 
+                            <h6 id="nombre_producto"></h6>  </p>
+                            <button type="button" class="float-right btn btn-outline-success ml-3" id="editar_nombre">Editar</button></p>
+                        </li>
+
+                <li class="list-group-item" id="li_descripcion">
+                    <h5>Descripción</h5> 
+                    <h6  id="descripcion"></h6></p>
+                    <button type="button" class="float-right btn btn-outline-success ml-3" id="editar_descripcion">Editar</button></p>
+                    
+                </li>
+                 
+                <li class="list-group-item" id="li_precio">
+                    <h5>Precio</h5>  
+                    <h6 id="precio"></h6>
+                    <button type="button" class="float-right btn btn-outline-success ml-3" id="editar_precio">Editar</button></p>
+                </li>
+                <li class="list-group-item" id="li_imagen">
+                    <h5>Cargar una nueva imagen</h5>  
+                    <h6 id="imagen_producto"></h6>
+                    <button type="button" class="float-right btn btn-outline-success ml-3" id="editar_imagen">Cargar nueva imagen</button></p>
+                </li>
+                                
+            </ul>
+            <div class="card text-center mt-5 ml-3 mr-3">
+                    <a id="volver" class="float-right btn btn-outline-success ml-3" >Volver </a>
+
+            </div>
+
+        </div>
+    </main>
+
+
+
+    <!-- Pie de página -->
+    <footer>
+        <div class="footer container-fluid bg-dark">
+            <div class="row">
+                <div class="col-md-12 text-center">
+                    <h6 class="text-muted">
+                    <br>
+                    <br>
+                        Proyecto primer año b_IT / Tu Tienda<br>
+                        Equipo RecoLab - Grupo Litoral<br>
+                    </h6>
+                </div>
+            </div>
+
+            <div class="row"> 
+                <div class="col-md-12 text-center">
+                    <p class="text-muted small">
+                    imauror98@gmail.com<br>
+                    juantrottatorres@gmail.com<br>
+                    jjpf85@gmail.com<br>
+                    benelliraul@gmail.com<br>
+                    camilachoca44@gmail.com<br>.</p>
+                </div>
+            </div>
+        </div> 
+    </footer>
+
+
+    <!-- Agrego archivos js -->
+    <script src="/static/js/bootstrap.js"></script>
+    <script src="/static/js/jquery-3.3.1.min.js"></script>
+    <script src="/static/js/bootstrap.bundle.js"></script>
+    <script src="/static/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/static/js/carga_producto.js"></script>
+    <script type="text/javascript" src="/static/js/opcion_editar_productos.js"></script>
+    
+
+</body>
+</html>

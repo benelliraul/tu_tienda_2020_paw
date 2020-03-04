@@ -1,0 +1,8 @@
+Entrega de modificacion en "Tu tienda"
+
+
+La funcionalidad que se implemento sobre el proyecto base
+fue "editar producto", la cual permite editar cualquiera de los datos de un producto.
+Para acceder a la nueva funcionalidad se debe ejecutar Demo_tu_tienda.py 
+y entrar desde un navegador a por ejemplo: http://localhost:8000/usuario_tienda/12, 
+debajo de los datos del producto aparece el boton editar.
