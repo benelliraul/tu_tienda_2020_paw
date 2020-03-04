@@ -139,24 +139,24 @@ document.addEventListener("DOMContentLoaded", function(){
 
 		//tienda 1 - carrousell
 		var tienda1_carrousell = document.querySelector('#img1_carrousel');
-		tienda1_carrousell.setAttribute("src", archivoTiendas[9].imagen_portada_tienda);
+		tienda1_carrousell.setAttribute("src", archivoTiendas[0].imagen_portada_tienda);
 		var href_tienda9 = document.querySelector('#href_carrousel_uno');
-		var direccion9=(/publico/+archivoTiendas[9].id_tienda);
+		var direccion9=(/publico/+archivoTiendas[0].id_tienda);
 		href_tienda9.setAttribute ("href",direccion9);
 
 		//tienda 2 - carrousell
 		var tienda2_carrousell = document.querySelector('#img2_carrousel');
-		tienda2_carrousell.setAttribute("src", archivoTiendas[10].imagen_portada_tienda);
+		tienda2_carrousell.setAttribute("src", archivoTiendas[1].imagen_portada_tienda);
 		var href_tienda10 = document.querySelector('#href_carrousel_dos');
-		var direccion10=(/publico/+archivoTiendas[10].id_tienda);
+		var direccion10=(/publico/+archivoTiendas[1].id_tienda);
 		href_tienda10.setAttribute ("href",direccion10);
 
 
 		//tienda 3 - carrousell
 		var tienda3_carrousell = document.querySelector('#img3_carrousel');
-		tienda3_carrousell.setAttribute("src", archivoTiendas[11].imagen_portada_tienda);
+		tienda3_carrousell.setAttribute("src", archivoTiendas[2].imagen_portada_tienda);
 		var href_tienda11 = document.querySelector('#href_carrousel_tres');
-		var direccion11=(/publico/+archivoTiendas[11].id_tienda);
+		var direccion11=(/publico/+archivoTiendas[2].id_tienda);
 		href_tienda11.setAttribute ("href",direccion11);
     }
 ,)})
