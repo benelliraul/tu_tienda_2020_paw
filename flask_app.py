@@ -163,9 +163,32 @@ def unt():
     global tienda
     return (jsonify(tienda))
 
+@app.route('/json_object', methods=['GET','POST'])
+def jspn_object():
+
+    if request.method == 'POST':
+        return jsonify({
+        "server": "My API lalalla post"
+    })
+    if request.method == 'GET':
+        return jsonify({
+        "Clave": "Valor, desde servidor web, formato json object"
+    })
+@app.route('/json_array')
+def json_array():
+    return jsonify([{
+        "Clave": "Valor, desde servidor web, formato json array"
+    }])
+@app.route('json_una_tienda')
+def json_una_tienda():
+	global tienda
+	tienda=mg.extraer_tienda(4,min=1)
+	return jsonify(tienda)
+
 @app.route('/productoeditar')
 def producto_edit():
     global producto
+
     return(jsonify(producto))
 
 @app.route('/producto')
@@ -216,6 +239,7 @@ def formulario():
     if request.method=='POST':
         global tienda
         archivo=request.files['imagen_tienda']
+        print(type(archivo))
         nombre_archivo = secure_filename(archivo.filename)
         if not extension_valida(nombre_archivo):
             return render_template('formulario.html',mensaje="""No se pduo cargar el archivo!!!!, el formato
@@ -257,5 +281,3 @@ def acerca():
 def logout():
     session.clear()
     return redirect(url_for('tutienda'))
-
-
