@@ -49,7 +49,7 @@ class Db_tiendas(Basedatos):
         except sqlite3.OperationalError:
             return False
 
-    def devolver_lista_tiendas(self,tiendas):
+    def devolver_lista_tiendas(self,tiendas,min=12):
         """Se utiliza internamente, toma una lista con los resultados de una consulta a
         la tabla tiendas y devuelve una lista de de diccionarios con los datos de cada tienda,
         si en la lista proporcionada no hubiera la cantidad de tiendas estipuladas en respuesta_minima(), 
@@ -69,7 +69,7 @@ class Db_tiendas(Basedatos):
             }
             lista_dict_tiendas.append(dict_obj)
 
-        return (self.respuesta_minima(lista_dict_tiendas))
+        return (self.respuesta_minima(lista_dict_tiendas,min=min))
     
     def respuesta_por_defecto(self):
         """Genera un diccionario con datos por defecto para una tienda, cada vez que se ejecuta asigna al azar una
@@ -88,13 +88,12 @@ class Db_tiendas(Basedatos):
                 }        
 
     
-    def respuesta_minima (self,lista=[]):
+    def respuesta_minima (self,lista=[],min=12):
         """Puede recibir una lista, compruba que tenga la cantidad de elementos segun la variable 'min'(12), de ser
         necesario completa la lista con tiendas por defecto en formato.
         Si no se le pasa una lista en la llamada, crea una lista y la completa segun la variable 'min' con 
         tiendas por defecto en formato diccionario. Devuelve la lista completa.
          """
-        min = 12
         while len(lista) < min:
             lista.append(self.respuesta_por_defecto())
         return(lista)
@@ -113,13 +112,14 @@ class Db_tiendas(Basedatos):
         else:
             return self.devolver_lista_tiendas(tiendas)
 
-    def extraer_tienda(self, id_tienda=0,g=False,prueba=False): 
+    def extraer_tienda(self, id_tienda=0,g=False,prueba=False, min=12): 
         """Extrae los datos de la tabla tiendas referentes al parámetro id.
         
         Retorna un diccionario generado a partir de los datos obtenidos, se puede almacenar en una variable 
         que se debe asignar en la declaración
         Ej: tienda_recuperada=Manager.extraer_tienda(id)
         Si la busqueda no obtiene resultados devuelve una Tienda por defecto 
+		el parametro min indica la cantidad de tiendas que se devolveran 
         """
         if prueba:
             return[3,'nubre_prueba','direccion_prueba','telefono_prueba','datos varios']
@@ -132,9 +132,9 @@ class Db_tiendas(Basedatos):
             return tienda[0:6]#agregado 18-2-2020
 
         if str(tienda)== 'None': #verifica que la consulta devuelva algun dato
-            return self.respuesta_minima() #objeto con datos por defecto
+            return self.respuesta_minima(min=min) #objeto con datos por defecto
         else:
-            return self.devolver_lista_tiendas([tienda])
+            return self.devolver_lista_tiendas([tienda],min=min)
     
     def extraer_n_tiendas_orden(self,n=10,orden='desc',contiene ='',columna=
                                 'nombre||direccion||categoria||correo'):

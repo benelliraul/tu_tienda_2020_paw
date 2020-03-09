@@ -164,7 +164,7 @@ def unt():
     return (jsonify(tienda))
 
 @app.route('/json_object', methods=['GET','POST'])
-def registro_mobil():
+def jspn_object():
 
     if request.method == 'POST':
         return jsonify({
@@ -179,7 +179,11 @@ def json_array():
     return jsonify([{
         "Clave": "Valor, desde servidor web, formato json array"
     }])
-
+@app.route('/json_una_tienda')
+def json_una_tienda():
+	global tienda
+	tienda=mg.extraer_tienda(4,min=1)
+	return jsonify(tienda)
 
 @app.route('/productoeditar')
 def producto_edit():
@@ -277,5 +281,3 @@ def acerca():
 def logout():
     session.clear()
     return redirect(url_for('tutienda'))
-
-
