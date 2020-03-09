@@ -183,7 +183,7 @@ def json_array():
 def json_una_tienda():
 	global tienda
 	tienda=mg.extraer_tienda(4,min=1)
-	return jsonify(tienda)
+	return jsonify(tienda[0])
 
 @app.route('/productoeditar')
 def producto_edit():
