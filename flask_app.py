@@ -73,6 +73,84 @@ def usuario():
 
     return make_response(render_template('index.html'),200,headers)
 
+@app.route('/modificar_datos_app', methods= ['GET','POST'])
+def modificar_datos_app():
+    salto= "\n"
+    prueba= open('prueba_login_app.txt', 'a')
+    prueba.write(salto+ "aca llegó desde modificar ")
+    if request.method =='POST':
+        prueba= open('prueba_login_app.txt', 'a')
+        prueba.write(salto+ "aca llegó dede modificar post")
+        nombre=request.form["nombre"]
+        direccion=request.form["direccion"]
+        celular=request.form["celular"]
+        correo=request.form["correo"]
+        prueba.write(salto+'nombre: '+ nombre +'direccion: '+ direccion+'telefono: '+celular+'correo: '+ correo)
+        prueba.close()
+    else:
+        prueba.close()
+        return "nada por aqui"
+
+
+
+@app.route('/usuario_app', methods =['GET','POST'])
+def usuario_app():
+    if request.method=='POST':
+        #salto= '\n'
+        #prueba= open('prueba_login_app.txt', 'a')
+        #prueba.write("aca llegó"+salto)
+        datos=request.get_json(True)
+        correo=str(datos['nombre'].strip(" "))
+        contrasena=str(datos['contrasena'].strip(" "))
+        #prueba.write(correo+" "+contrasena+salto)
+        global tienda
+        tienda=mg.extraer_tienda(8,min=1)
+        validacion=mg.es_usuario(correo)
+        #prueba.write(str(validacion)+salto)
+        #prueba.close()
+        if validacion:
+            if check_password_hash(validacion[1],contrasena):
+                session.clear()
+                session['usuario']=correo
+                session['autentificado']=True
+                session['id_tienda']=validacion[0]
+                tienda=mg.extraer_tienda(session['id_tienda'],min=1)
+                return jsonify(tienda[0])
+            else:
+                tienda=mg.extraer_tienda(min=1)
+                return jsonify(tienda[0])
+        else:
+                tienda=mg.extraer_tienda(min=1)
+                return jsonify(tienda[0])
+
+
+    else:
+        prueba= open('prueba_login_app.txt', 'a')
+        prueba.write( "no valido")
+        prueba.close()
+        return "aca estamos"
+
+@app.route('/formulario_app', methods=['GET','POST'])
+def formulario_app():
+	if request.method=='POST':
+		nombre=request.form['nomnbre']
+		direccion=request.form['direccion']
+		celular=request.form['celular']
+		correo=request.form['correo']
+		contrasena=request.form['contrasena']
+		prueba= open('prueba.txt', "a")
+		salto= '\n'
+
+		prueba.write(salto+'nombre: '+ nombre +'direccion: '+ direccion+'celular: '+celular+
+					'correo: '+correo+' contrasena: '+contrasena)
+		prueba.close()
+	else:
+	    prueba= open('prueba.txt', "a")
+	    prueba.write('no se cago nada, pero se llamo la funcion')
+	    prueba.close()
+	    return make_response(200)
+
+
 @app.route('/')
 @app.route('/tutienda',methods=['GET','POST'])
 def tutienda():
