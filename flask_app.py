@@ -1,4 +1,5 @@
 import os
+import base64
 import json
 from flask import Flask,make_response,render_template,request, redirect,jsonify,Response,url_for, session, g
 from werkzeug.utils import secure_filename
@@ -76,8 +77,6 @@ def usuario():
 @app.route('/modificar_datos_app', methods= ['GET','POST'])
 def modificar_datos_app():
     salto= "\n"
-    prueba= open('prueba_login_app.txt', 'a')
-    prueba.write(salto+ "aca llegó desde modificar ")
     if request.method =='POST':
         prueba= open('prueba_login_app.txt', 'a')
         prueba.write(salto+ "aca llegó dede modificar post")
@@ -88,7 +87,6 @@ def modificar_datos_app():
         prueba.write(salto+'nombre: '+ nombre +'direccion: '+ direccion+'telefono: '+celular+'correo: '+ correo)
         prueba.close()
     else:
-        prueba.close()
         return "nada por aqui"
 
 
@@ -96,18 +94,11 @@ def modificar_datos_app():
 @app.route('/usuario_app', methods =['GET','POST'])
 def usuario_app():
     if request.method=='POST':
-        #salto= '\n'
-        #prueba= open('prueba_login_app.txt', 'a')
-        #prueba.write("aca llegó"+salto)
         datos=request.get_json(True)
         correo=str(datos['nombre'].strip(" "))
         contrasena=str(datos['contrasena'].strip(" "))
-        #prueba.write(correo+" "+contrasena+salto)
         global tienda
-        tienda=mg.extraer_tienda(8,min=1)
         validacion=mg.es_usuario(correo)
-        #prueba.write(str(validacion)+salto)
-        #prueba.close()
         if validacion:
             if check_password_hash(validacion[1],contrasena):
                 session.clear()
@@ -120,35 +111,88 @@ def usuario_app():
                 tienda=mg.extraer_tienda(min=1)
                 return jsonify(tienda[0])
         else:
-                tienda=mg.extraer_tienda(min=1)
-                return jsonify(tienda[0])
+            tienda=mg.extraer_tienda(min=1)
+            return jsonify(tienda[0])
 
 
     else:
-        prueba= open('prueba_login_app.txt', 'a')
-        prueba.write( "no valido")
-        prueba.close()
         return "aca estamos"
+@app.route('/lista_productos/<n>')
+def lsita_prod(n):
+    lista=mg.extraer_productos_tienda(n)
+    return jsonify(lista)
 
 @app.route('/formulario_app', methods=['GET','POST'])
 def formulario_app():
-	if request.method=='POST':
-		nombre=request.form['nomnbre']
-		direccion=request.form['direccion']
-		celular=request.form['celular']
-		correo=request.form['correo']
-		contrasena=request.form['contrasena']
-		prueba= open('prueba.txt', "a")
-		salto= '\n'
+    salto= "\n"
+    if request.method=='POST':
+        nombre=request.form['nombre']
+        correo=request.form['correo']
+        if not mg.verificar_nombre_disponible('nombre', nombre):
+            return  make_response("El nombre ya está registrado")
+        if not mg.verificar_nombre_disponible("correo",correo):
+            return  make_response("El correo ya está registrado")
+        celular=request.form['celular']
+        direccion=request.form['direccion']
+        contrasena=request.form['contrasena']
+        img_b64=request.form["imagen_b64"]
+        imagen_recuperada = base64.b64decode(img_b64)
+        nombre_archivo=str("portada"+nombre+correo)
+        imagen=open(os.path.join(app.config['IMG_TIENDAS'], nombre_archivo),'wb')
+        imagen.write(imagen_recuperada)
+        categoria_tienda="Articulos varios"
+        ruta_imagen_tienda=str("/static/img_tiendas/"+nombre_archivo)
+        contrasena=generate_password_hash(contrasena)
+        nueva_tienda=Tienda(nombre,direccion,categoria_tienda,ruta_imagen_tienda,
+                correo,celular,contrasena)
+        id_real=mg.agregar_tienda(nueva_tienda)
+        #tienda=mg.extraer_tienda(id_real)
+        session.clear()
+        session['usuario']=correo
+        session['autentificado']=True
+        session['id_tienda']=id_real
+        return  make_response("todo_ok")
+    else:
+        return  make_response("aca en get")
 
-		prueba.write(salto+'nombre: '+ nombre +'direccion: '+ direccion+'celular: '+celular+
-					'correo: '+correo+' contrasena: '+contrasena)
-		prueba.close()
-	else:
-	    prueba= open('prueba.txt', "a")
-	    prueba.write('no se cago nada, pero se llamo la funcion')
-	    prueba.close()
-	    return make_response(200)
+@app.route('/visitantes_app')
+def visitantes_app():
+    tiendas=mg.extraer_todas_tiendas()
+    return  jsonify(tiendas)
+
+@app.route('/nuevo_producto_app/<id>',methods=['GET','POST'])
+def carga_prod_app(id):
+    if request.method=='POST':
+        salto= "\n"
+        prueba= open('prueba_login_app.txt', 'a')
+        prueba.write(salto+ "aca llegó dede nuev prod post, id: "+id)
+        prueba.close()
+        nombre_prod=request.form['producto']
+        descripcion_prod=request.form['descripcion']
+        precio_prod=request.form['precio']
+        img_b64=request.form["imagen_b64"]
+        if len(descripcion_prod)<10:
+            nombre_archivo=str("producto"+nombre_prod+descripcion_prod)
+        else:
+            nombre_archivo=str("producto"+nombre_prod+descripcion_prod[0:8])
+        imagen_recuperada = base64.b64decode(img_b64)
+        imagen=open(os.path.join(app.config['IMG_PRODUCTOS'], nombre_archivo),'wb')
+        imagen.write(imagen_recuperada)
+        ruta_imagen_producto=str("/static/img_productos/"+nombre_archivo)
+        producto=Producto(id,nombre_prod,descripcion_prod,ruta_imagen_producto,precio_prod)
+        mg.agregar_producto(producto,id)
+        return  make_response("todo_ok")
+    else:
+        return  make_response("todo_ok")
+
+
+
+@app.route('/usuario_logueado_app/<int:id>')
+
+def logueado_app(id):
+    tienda=mg.extraer_tienda(id,min=1)
+    return jsonify(tienda[0])
+
 
 
 @app.route('/')
@@ -259,9 +303,9 @@ def json_array():
     }])
 @app.route('/json_una_tienda')
 def json_una_tienda():
-	global tienda
-	tienda=mg.extraer_tienda(4,min=1)
-	return jsonify(tienda[0])
+    global tienda
+    tienda=mg.extraer_tienda(4,min=1)
+    return jsonify(tienda[0])
 
 @app.route('/productoeditar')
 def producto_edit():
@@ -317,7 +361,6 @@ def formulario():
     if request.method=='POST':
         global tienda
         archivo=request.files['imagen_tienda']
-        print(type(archivo))
         nombre_archivo = secure_filename(archivo.filename)
         if not extension_valida(nombre_archivo):
             return render_template('formulario.html',mensaje="""No se pduo cargar el archivo!!!!, el formato
