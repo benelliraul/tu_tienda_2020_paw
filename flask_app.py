@@ -133,6 +133,10 @@ def formulario_app():
         if not mg.verificar_nombre_disponible("correo",correo):
             return  make_response("El correo ya está registrado")
         celular=request.form['celular']
+        latitud=request.form['latitud']
+        longitud=request.form['longitud']
+        #salto= "\n"
+        prueba= open('prueba_login_app.txt', 'a')
         direccion=request.form['direccion']
         contrasena=request.form['contrasena']
         img_b64=request.form["imagen_b64"]
@@ -144,8 +148,10 @@ def formulario_app():
         ruta_imagen_tienda=str("/static/img_tiendas/"+nombre_archivo)
         contrasena=generate_password_hash(contrasena)
         nueva_tienda=Tienda(nombre,direccion,categoria_tienda,ruta_imagen_tienda,
-                correo,celular,contrasena)
+                correo,celular,contrasena,latitud,longitud)
         id_real=mg.agregar_tienda(nueva_tienda)
+        prueba.write(salto+ "aca llegó lat y long: "+latitud+', '+ longitud)
+        prueba.close()
         #tienda=mg.extraer_tienda(id_real)
         session.clear()
         session['usuario']=correo
@@ -353,6 +359,13 @@ def editar(id_producto):
         headers = {'Content-Type': 'text/html'}
         return make_response(render_template('editar_producto.html'),200,headers)
     return render_template('editar_producto.html')
+
+@app.route('/cerca/<lat>/<lon>')
+def cerca(lat,lon):
+    tiendas=mg.buscar_tienda_cerca(lat,lon,500,min=12)
+    #tiendas=mg.extraer_todas_tiendas()
+    #return (jsonify(tiendas))
+    return (jsonify(tiendas))
 
 @app.route('/formulario',methods=['GET','POST'])
 def formulario():

@@ -14,13 +14,13 @@ class Db_tiendas(Basedatos):
         if isinstance(tienda,Tienda):
 
             datos_tienda = [tienda.nombre_tienda, tienda.direccion_tienda,tienda.categoria,
-             tienda.imagen_portada_tienda,tienda.correo_tienda,tienda.telefono_tienda,tienda.metadata_tienda]
+             tienda.imagen_portada_tienda,tienda.correo_tienda,tienda.telefono_tienda,tienda.metadata_tienda,tienda.latitud,tienda.longitud]
             try:
                 self.conectar_base_datos()
                 self.cursor.execute('''INSERT INTO tiendas(
                                         nombre,direccion,categoria,
-                                        ruta_imagen,correo,telefono,metadata) VALUES
-                                        (?,?,?,?,?,?,?);''', datos_tienda)
+                                        ruta_imagen,correo,telefono,metadata,latitud,longitud) VALUES
+                                        (?,?,?,?,?,?,?,?,?);''', datos_tienda)
                 self.commit()
                 self.cursor.execute("SELECT id_tienda FROM tiendas ORDER BY id_tienda DESC LIMIT 1")
                 id_t=self.cursor.fetchone()
@@ -49,6 +49,35 @@ class Db_tiendas(Basedatos):
         except sqlite3.OperationalError:
             return False
 
+    def buscar_tienda_cerca(self,lat,lon,rango_mt,min=12):
+        un_metro=0.000009035872
+        dist_lat_sup=float(lat)-(un_metro*rango_mt)
+        dist_lat_inf=float(lat)+(un_metro*rango_mt)
+        dist_lon_occ=float(lon)-(un_metro*rango_mt)
+        dist_lon_or=float(lon)+(un_metro*rango_mt)
+
+        self.conectar_base_datos()
+        self.cursor.execute("SELECT * FROM tiendas WHERE latitud BETWEEN ? AND ? AND longitud BETWEEN ? AND ?;",[dist_lat_sup,dist_lat_inf,dist_lon_occ,dist_lon_or])
+        tiendas = self.cursor.fetchall()
+        self.cerrar_conexion()
+
+        if len(tiendas)==0:
+            return self.respuesta_minima()
+        else:
+            return self.devolver_lista_tiendas(tiendas)
+
+        """self.conectar_base_datos()
+        self.cursor.execute("SELECT * FROM tiendas")
+        tienda = self.cursor.fetchall()
+        self.cerrar_conexion()
+
+        if str(tienda)== 'None': #verifica que la consulta devuelva algun dato
+            return self.respuesta_minima(min=min) #objeto con datos por defecto
+        else:
+            return self.devolver_lista_tiendas([tienda],min=min)
+"""
+
+
     def devolver_lista_tiendas(self,tiendas,min=12):
         """Se utiliza internamente, toma una lista con los resultados de una consulta a
         la tabla tiendas y devuelve una lista de de diccionarios con los datos de cada tienda,
@@ -65,7 +94,9 @@ class Db_tiendas(Basedatos):
                 "imagen_portada_tienda" : registro[4],
                 "contacto" : registro[6],
                 "correo_electronico" : registro[5],
-                "meta_data" : "kmadfknwnlfansldvnkargkn+knasklcns@lmkdnv@slmadcmad"
+                "meta_data" : "kmadfknwnlfansldvnkargkn+knasklcns@lmkdnv@slmadcmad",
+                "latitud": registro[8],
+                "longitud": registro[9]
             }
             lista_dict_tiendas.append(dict_obj)
 

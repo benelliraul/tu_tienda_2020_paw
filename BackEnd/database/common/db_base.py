@@ -39,7 +39,9 @@ class Basedatos():
 									   ruta_imagen TEXT NOT NULL,
 									   correo TEXT NOT NULL,
                                        telefono TEXT NOT NULL,
-                                       metadata TEXT)''',
+                                       metadata TEXT,
+                                       latitud REAL,
+                                       longitud REAL)''',
 
                                        '''CREATE TABLE IF NOT EXISTS productos (
 									   id_producto INTEGER PRIMARY KEY AUTOINCREMENT,
