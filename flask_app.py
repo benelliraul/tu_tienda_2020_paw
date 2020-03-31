@@ -169,10 +169,6 @@ def visitantes_app():
 @app.route('/nuevo_producto_app/<id>',methods=['GET','POST'])
 def carga_prod_app(id):
     if request.method=='POST':
-        salto= "\n"
-        prueba= open('prueba_login_app.txt', 'a')
-        prueba.write(salto+ "aca llegó dede nuev prod post, id: "+id)
-        prueba.close()
         nombre_prod=request.form['producto']
         descripcion_prod=request.form['descripcion']
         precio_prod=request.form['precio']
@@ -205,7 +201,7 @@ def logueado_app(id):
 @app.route('/tutienda',methods=['GET','POST'])
 def tutienda():
     global tienda
-    tienda=mg.extraer_n_tiendas_orden(12,'aleatorio')
+    tienda=mg.extraer_n_tiendas_orden(orden='aleatorio')
     headers = {'Content-Type': 'text/html'}
     return make_response(render_template('index.html'),200,headers)
 
@@ -255,6 +251,11 @@ def carga_producto_id():
 
     headers = {'Content-Type': 'text/html'}
     return make_response(render_template('carga_producto.html'),200,headers)
+
+@app.route('/buscar_app/<palabra>')
+def buscar_app(palabra):
+    tienda=mg.extraer_n_tiendas_orden(12,'desc',palabra)
+    return jsonify(tienda)
 
 @app.route('/buscar',methods=['GET','POST'])
 def busqueda():
@@ -360,12 +361,10 @@ def editar(id_producto):
         return make_response(render_template('editar_producto.html'),200,headers)
     return render_template('editar_producto.html')
 
-@app.route('/cerca/<lat>/<lon>')
-def cerca(lat,lon):
-    tiendas=mg.buscar_tienda_cerca(lat,lon,500,min=12)
-    #tiendas=mg.extraer_todas_tiendas()
-    #return (jsonify(tiendas))
-    return (jsonify(tiendas))
+@app.route('/cerca/<lat>/<lon>/<rango>')
+def cerca(lat,lon,rango):
+    las_tiendas=mg.buscar_tienda_cerca(lat,lon,int(rango),min=1)
+    return (jsonify(las_tiendas))
 
 @app.route('/formulario',methods=['GET','POST'])
 def formulario():
